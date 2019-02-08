@@ -3,15 +3,9 @@ output: html_document
 ---
 # PhonRNN
 
-First, we include all required functions for the analysis, including some custom functions from `analysis/utils.R` and other packages from CRAN.
+First, we include all required functions for the analysis, contained in `analysis/utils.R`.
 
 ```{r includes}
-# external libraries
-library(ggplot2)
-library(reshape2)
-library(tidyr)
-library(dplyr)
-
 # custom functions
 source("utils.R")
 ```
@@ -123,7 +117,6 @@ utils$plot_dendro(untrained_embs, best_aware, phone_cats_file)
 
 # read in just the model probabilities on Daland et al., 2011 words
 model_probs = utils$combine(results_folder, words_file = 'daland-probs.csv')
-read.csv(daland_et_al_2011)
 human_probs = subset(read.csv(daland_et_al_2011),
                      select = c("phono_ipa", "score"))
 

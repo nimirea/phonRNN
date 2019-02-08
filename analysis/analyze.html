@@ -126,34 +126,22 @@ $(document).ready(function () {
 
 <div id="phonrnn" class="section level1">
 <h1>PhonRNN</h1>
-<p>First, we include all required functions for the analysis, including some custom functions from <code>analysis/utils.R</code> and other packages from CRAN.</p>
-<pre class="r"><code># external libraries
-library(ggplot2)
-library(reshape2)
-library(tidyr)</code></pre>
-<pre><code>## 
-## Attaching package: 'tidyr'</code></pre>
-<pre><code>## The following object is masked from 'package:reshape2':
-## 
-##     smiths</code></pre>
-<pre class="r"><code>library(dplyr)</code></pre>
-<pre><code>## 
-## Attaching package: 'dplyr'</code></pre>
-<pre><code>## The following objects are masked from 'package:stats':
-## 
-##     filter, lag</code></pre>
-<pre><code>## The following objects are masked from 'package:base':
-## 
-##     intersect, setdiff, setequal, union</code></pre>
+<p>First, we include all required functions for the analysis, contained in <code>analysis/utils.R</code>.</p>
 <pre class="r"><code># custom functions
 source(&quot;utils.R&quot;)</code></pre>
 <pre><code>## ── Attaching packages ────────────────────────────────── tidyverse 1.2.1 ──</code></pre>
-<pre><code>## ✔ tibble  1.4.2     ✔ purrr   0.2.4
-## ✔ readr   1.1.1     ✔ stringr 1.3.1
-## ✔ tibble  1.4.2     ✔ forcats 0.3.0</code></pre>
+<pre><code>## ✔ ggplot2 2.2.1     ✔ purrr   0.2.4
+## ✔ tibble  1.4.2     ✔ dplyr   0.7.5
+## ✔ tidyr   0.8.1     ✔ stringr 1.3.1
+## ✔ readr   1.1.1     ✔ forcats 0.3.0</code></pre>
 <pre><code>## ── Conflicts ───────────────────────────────────── tidyverse_conflicts() ──
 ## ✖ dplyr::filter() masks stats::filter()
 ## ✖ dplyr::lag()    masks stats::lag()</code></pre>
+<pre><code>## 
+## Attaching package: 'reshape2'</code></pre>
+<pre><code>## The following object is masked from 'package:tidyr':
+## 
+##     smiths</code></pre>
 <pre><code>## 
 ## Attaching package: 'gplots'</code></pre>
 <pre><code>## The following object is masked from 'package:stats':
@@ -253,202 +241,7 @@ utils$plot_dendro(trained_embs, best_naive, phone_cats_file)</code></pre>
 <h2>Correlations with Human Judgments on Nonce Words</h2>
 <pre class="r"><code># read in just the model probabilities on Daland et al., 2011 words
 model_probs = utils$combine(results_folder, words_file = 'daland-probs.csv')
-read.csv(daland_et_al_2011)</code></pre>
-<pre><code>##        ortho attestedness likert_rating      score            phono_cmu
-## 1   BLEEGIFF     attested      3.800000 0.64210526  B L IY1 G IH0 FCoda
-## 2    BLEZZIG     attested      3.350000 0.75789474  B L EH1 Z IH0 GCoda
-## 3   BREEGIFF     attested      3.600000 0.65263158  B R IY1 G IH0 FCoda
-## 4    BREPPID     attested      3.900000 0.73684211  B R EH1 P IH0 DCoda
-## 5   BWEEGIFF     marginal      2.250000 0.47368421  B W IY1 G IH0 FCoda
-## 6    BWOSSIP     marginal      2.700000 0.43157895  B W AA1 S IH0 PCoda
-## 7    DGEPPID   unattested      1.421053 0.14736842  D G EH1 P IH0 DCoda
-## 8   DGOTTIFF   unattested      1.450000 0.19148936  D G AA1 T IH0 FCoda
-## 9   DNEEGIFF   unattested      1.631579 0.24210526  D N IY1 G IH0 FCoda
-## 10  DNOTTIFF   unattested      1.600000 0.26315789  D N AA1 T IH0 FCoda
-## 11  DREEGIFF     attested      3.150000 0.56842105  D R IY1 G IH0 FCoda
-## 12   DREPPID     attested      4.350000 0.89473684  D R EH1 P IH0 DCoda
-## 13   DWEZZIG     marginal      2.800000 0.60000000  D W EH1 Z IH0 GCoda
-## 14  DWOTTIFF     marginal      2.300000 0.42553191  D W AA1 T IH0 FCoda
-## 15   FLEZZIG     attested      3.950000 0.68421053  F L EH1 Z IH0 GCoda
-## 16  FLOTTIFF     attested      4.250000 0.78947368  F L AA1 T IH0 FCoda
-## 17   FNEEBID   unattested      1.700000 0.37894737  F N IY1 B IH0 DCoda
-## 18   FNEZZIG   unattested      1.700000 0.36842105  F N EH1 Z IH0 GCoda
-## 19   FREPPID     attested      4.350000 0.87368421  F R EH1 P IH0 DCoda
-## 20   FROSSIP     attested      4.700000 0.83157895  F R AA1 S IH0 PCoda
-## 21   FWEEBID     marginal      2.550000 0.51063830  F W IY1 B IH0 DCoda
-## 22   FWEZZIG     marginal      2.250000 0.43157895  F W EH1 Z IH0 GCoda
-## 23   GLEPPID     attested      3.900000 0.79787234  G L EH1 P IH0 DCoda
-## 24  GLOTTIFF     attested      3.550000 0.68421053  G L AA1 T IH0 FCoda
-## 25   GREEBID     attested      4.850000 0.83157895  G R IY1 B IH0 DCoda
-## 26  GROTTIFF     attested      4.150000 0.71276596  G R AA1 T IH0 FCoda
-## 27   GWEEBID     marginal      2.850000 0.52631579  G W IY1 B IH0 DCoda
-## 28  GWOTTIFF     marginal      2.500000 0.48421053  G W AA1 T IH0 FCoda
-## 29   KLEEBID     attested      3.950000 0.73684211  K L IY1 B IH0 DCoda
-## 30   KLOSSIP     attested      4.050000 0.76842105  K L AA1 S IH0 PCoda
-## 31   KMEPPID   unattested      1.300000 0.27956989  K M EH1 P IH0 DCoda
-## 32   KMOSSIP   unattested      1.850000 0.36842105  K M AA1 S IH0 PCoda
-## 33   KREEBID     attested      4.250000 0.74736842  K R IY1 B IH0 DCoda
-## 34   KREZZIG     attested      3.300000 0.70526316  K R EH1 Z IH0 GCoda
-## 35   KWEEBID     attested      3.500000 0.55789474  K W IY1 B IH0 DCoda
-## 36  KWOTTIFF     attested      2.500000 0.38947368  K W AA1 T IH0 FCoda
-## 37   LMEEBID   unattested      1.500000 0.21052632  L M IY1 B IH0 DCoda
-## 38  LMOTTIFF   unattested      1.300000 0.24210526  L M AA1 T IH0 FCoda
-## 39  LNEEGIFF   unattested      1.450000 0.20000000  L N IY1 G IH0 FCoda
-## 40   LNEZZIG   unattested      1.450000 0.18947368  L N EH1 Z IH0 GCoda
-## 41   LTEZZIG   unattested      1.550000 0.13684210  L T EH1 Z IH0 GCoda
-## 42  LTOTTIFF   unattested      1.400000 0.09473684  L T AA1 T IH0 FCoda
-## 43   MLEPPID   unattested      1.500000 0.30526316  M L EH1 P IH0 DCoda
-## 44   MLOSSIP   unattested      1.800000 0.43157895  M L AA1 S IH0 PCoda
-## 45  MREEGIFF   unattested      2.000000 0.31578947  M R IY1 G IH0 FCoda
-## 46  MROTTIFF   unattested      1.700000 0.38947368  M R AA1 T IH0 FCoda
-## 47   NLEEBID   unattested      1.850000 0.26315789  N L IY1 B IH0 DCoda
-## 48   NLEZZIG   unattested      1.350000 0.23157895  N L EH1 Z IH0 GCoda
-## 49   PKEEBID   unattested      1.650000 0.23157895  P K IY1 B IH0 DCoda
-## 50   PKOSSIP   unattested      1.550000 0.23157895  P K AA1 S IH0 PCoda
-## 51   PLEPPID     attested      3.850000 0.74468085  P L EH1 P IH0 DCoda
-## 52   PLOSSIP     attested      4.350000 0.89473684  P L AA1 S IH0 PCoda
-## 53   PREZZIG     attested      3.650000 0.75789474  P R EH1 Z IH0 GCoda
-## 54  PROTTIFF     attested      4.250000 0.76842105  P R AA1 T IH0 FCoda
-## 55  PWEEGIFF   unattested      2.300000 0.37894737  P W IY1 G IH0 FCoda
-## 56   PWEZZIG   unattested      2.150000 0.41052632  P W EH1 Z IH0 GCoda
-## 57  RDEEGIFF   unattested      1.150000 0.12631579  R D IY1 G IH0 FCoda
-## 58   RDOSSIP   unattested      1.500000 0.23157895  R D AA1 S IH0 PCoda
-## 59   RGEEBID   unattested      1.600000 0.11578947  R G IY1 B IH0 DCoda
-## 60   RGEPPID   unattested      1.450000 0.09473684  R G EH1 P IH0 DCoda
-## 61  RLEEGIFF   unattested      1.800000 0.28421053  R L IY1 G IH0 FCoda
-## 62   RLEZZIG   unattested      1.450000 0.30526316  R L EH1 Z IH0 GCoda
-## 63   RNEPPID   unattested      1.650000 0.21052632  R N EH1 P IH0 DCoda
-## 64   RNOSSIP   unattested      1.500000 0.33684211  R N AA1 S IH0 PCoda
-## 65  SHLEEBID     marginal      3.100000 0.63829787 SH L IY1 B IH0 DCoda
-## 66  SHLEZZIG     marginal      3.150000 0.56842105 SH L EH1 Z IH0 GCoda
-## 67 SHMEEGIFF     marginal      2.700000 0.41052632 SH M IY1 G IH0 FCoda
-## 68 SHMOTTIFF     marginal      2.650000 0.61702128 SH M AA1 T IH0 FCoda
-## 69 SHNEEGIFF     marginal      2.400000 0.48936170 SH N IY1 G IH0 FCoda
-## 70  SHNEPPID     marginal      2.789474 0.56842105 SH N EH1 P IH0 DCoda
-## 71  SHREEBID     attested      4.050000 0.72631579 SH R IY1 B IH0 DCoda
-## 72  SHREPPID     attested      4.000000 0.78947368 SH R EH1 P IH0 DCoda
-## 73  SHWEPPID     marginal      2.900000 0.66315789 SH W EH1 P IH0 DCoda
-## 74  SHWOSSIP     marginal      3.000000 0.49473684 SH W AA1 S IH0 PCoda
-## 75   SMEEBID     attested      4.050000 0.67368421  S M IY1 B IH0 DCoda
-## 76  SMOTTIFF     attested      3.800000 0.67368421  S M AA1 T IH0 FCoda
-## 77  SNEEGIFF     attested      3.500000 0.64210526  S N IY1 G IH0 FCoda
-## 78   SNOSSIP     attested      4.450000 0.75789474  S N AA1 S IH0 PCoda
-## 79  SWEEGIFF     attested      3.000000 0.68421053  S W IY1 G IH0 FCoda
-## 80   SWEZZIG     attested      3.400000 0.62765957  S W EH1 Z IH0 GCoda
-## 81  THWEPPID     attested      2.200000 0.50526316 TH W EH1 P IH0 DCoda
-## 82  THWOSSIP     attested      2.650000 0.57894737 TH W AA1 S IH0 PCoda
-## 83   TLEEBID     attested      1.750000 0.45263158  T L IY1 B IH0 DCoda
-## 84  TLOTTIFF     attested      1.842105 0.35789474  T L AA1 T IH0 FCoda
-## 85   TREZZIG     attested      4.050000 0.71578947  T R EH1 Z IH0 GCoda
-## 86   TROSSIP     attested      5.000000 0.81052632  T R AA1 S IH0 PCoda
-## 87  TWEEGIFF     marginal      3.400000 0.61052632  T W IY1 G IH0 FCoda
-## 88   TWOSSIP     marginal      3.500000 0.74736842  T W AA1 S IH0 PCoda
-## 89   VLEPPID     marginal      2.300000 0.54736842  V L EH1 P IH0 DCoda
-## 90   VLOSSIP     marginal      3.700000 0.57894737  V L AA1 S IH0 PCoda
-## 91   VREEBID     marginal      2.700000 0.63157895  V R IY1 B IH0 DCoda
-## 92   VREZZIG     marginal      2.300000 0.47368421  V R EH1 Z IH0 GCoda
-## 93  VWEEGIFF   unattested      1.700000 0.24210526  V W IY1 G IH0 FCoda
-## 94  VWOTTIFF   unattested      1.550000 0.18947368  V W AA1 T IH0 FCoda
-## 95   ZREPPID   unattested      2.050000 0.52631579  Z R EH1 P IH0 DCoda
-## 96   ZROSSIP   unattested      2.100000 0.38947368  Z R AA1 S IH0 PCoda
-##        phono_ipa
-## 1  b l i1ː g ɪ f
-## 2   b l ɛ1 z ɪ g
-## 3  b ɹ i1ː g ɪ f
-## 4   b ɹ ɛ1 p ɪ d
-## 5  b w i1ː g ɪ f
-## 6  b w ɑ1ː s ɪ p
-## 7   d g ɛ1 p ɪ d
-## 8  d g ɑ1ː t ɪ f
-## 9  d n i1ː g ɪ f
-## 10 d n ɑ1ː t ɪ f
-## 11 d ɹ i1ː g ɪ f
-## 12  d ɹ ɛ1 p ɪ d
-## 13  d w ɛ1 z ɪ g
-## 14 d w ɑ1ː t ɪ f
-## 15  f l ɛ1 z ɪ g
-## 16 f l ɑ1ː t ɪ f
-## 17 f n i1ː b ɪ d
-## 18  f n ɛ1 z ɪ g
-## 19  f ɹ ɛ1 p ɪ d
-## 20 f ɹ ɑ1ː s ɪ p
-## 21 f w i1ː b ɪ d
-## 22  f w ɛ1 z ɪ g
-## 23  g l ɛ1 p ɪ d
-## 24 g l ɑ1ː t ɪ f
-## 25 g ɹ i1ː b ɪ d
-## 26 g ɹ ɑ1ː t ɪ f
-## 27 g w i1ː b ɪ d
-## 28 g w ɑ1ː t ɪ f
-## 29 k l i1ː b ɪ d
-## 30 k l ɑ1ː s ɪ p
-## 31  k m ɛ1 p ɪ d
-## 32 k m ɑ1ː s ɪ p
-## 33 k ɹ i1ː b ɪ d
-## 34  k ɹ ɛ1 z ɪ g
-## 35 k w i1ː b ɪ d
-## 36 k w ɑ1ː t ɪ f
-## 37 l m i1ː b ɪ d
-## 38 l m ɑ1ː t ɪ f
-## 39 l n i1ː g ɪ f
-## 40  l n ɛ1 z ɪ g
-## 41  l t ɛ1 z ɪ g
-## 42 l t ɑ1ː t ɪ f
-## 43  m l ɛ1 p ɪ d
-## 44 m l ɑ1ː s ɪ p
-## 45 m ɹ i1ː g ɪ f
-## 46 m ɹ ɑ1ː t ɪ f
-## 47 n l i1ː b ɪ d
-## 48  n l ɛ1 z ɪ g
-## 49 p k i1ː b ɪ d
-## 50 p k ɑ1ː s ɪ p
-## 51  p l ɛ1 p ɪ d
-## 52 p l ɑ1ː s ɪ p
-## 53  p ɹ ɛ1 z ɪ g
-## 54 p ɹ ɑ1ː t ɪ f
-## 55 p w i1ː g ɪ f
-## 56  p w ɛ1 z ɪ g
-## 57 ɹ d i1ː g ɪ f
-## 58 ɹ d ɑ1ː s ɪ p
-## 59 ɹ g i1ː b ɪ d
-## 60  ɹ g ɛ1 p ɪ d
-## 61 ɹ l i1ː g ɪ f
-## 62  ɹ l ɛ1 z ɪ g
-## 63  ɹ n ɛ1 p ɪ d
-## 64 ɹ n ɑ1ː s ɪ p
-## 65 ʃ l i1ː b ɪ d
-## 66  ʃ l ɛ1 z ɪ g
-## 67 ʃ m i1ː g ɪ f
-## 68 ʃ m ɑ1ː t ɪ f
-## 69 ʃ n i1ː g ɪ f
-## 70  ʃ n ɛ1 p ɪ d
-## 71 ʃ ɹ i1ː b ɪ d
-## 72  ʃ ɹ ɛ1 p ɪ d
-## 73  ʃ w ɛ1 p ɪ d
-## 74 ʃ w ɑ1ː s ɪ p
-## 75 s m i1ː b ɪ d
-## 76 s m ɑ1ː t ɪ f
-## 77 s n i1ː g ɪ f
-## 78 s n ɑ1ː s ɪ p
-## 79 s w i1ː g ɪ f
-## 80  s w ɛ1 z ɪ g
-## 81  θ w ɛ1 p ɪ d
-## 82 θ w ɑ1ː s ɪ p
-## 83 t l i1ː b ɪ d
-## 84 t l ɑ1ː t ɪ f
-## 85  t ɹ ɛ1 z ɪ g
-## 86 t ɹ ɑ1ː s ɪ p
-## 87 t w i1ː g ɪ f
-## 88 t w ɑ1ː s ɪ p
-## 89  v l ɛ1 p ɪ d
-## 90 v l ɑ1ː s ɪ p
-## 91 v ɹ i1ː b ɪ d
-## 92  v ɹ ɛ1 z ɪ g
-## 93 v w i1ː g ɪ f
-## 94 v w ɑ1ː t ɪ f
-## 95  z ɹ ɛ1 p ɪ d
-## 96 z ɹ ɑ1ː s ɪ p</code></pre>
-<pre class="r"><code>human_probs = subset(read.csv(daland_et_al_2011),
+human_probs = subset(read.csv(daland_et_al_2011),
                      select = c(&quot;phono_ipa&quot;, &quot;score&quot;))
 
 # merge data into one big dataframe

@@ -20,9 +20,8 @@ This repository contains code for running an RNN network for the purposes of mod
 * Analysis and visualization: R, with the following packages
   - tidyverse
   - cluster
-  - plyr
   - reshape2
-  - tidyr
+  - dplyr
   - ggplot2
   - ggdendro
   - gplots
