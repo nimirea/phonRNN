@@ -2,15 +2,15 @@
 
 ## Purpose
 
-This repository contains code for running an LSTM network for the purposes of modeling word-level phonotactics, and analyzing the output of this modeling.
+This repository contains code for running an RNN network for the purposes of modeling word-level phonotactics, and analyzing the output of this modeling. This project takes a lot of inspiration from the [PyTorch word-level language modeling RNN](https://github.com/pytorch/examples/tree/master/word_language_model) (although that project has been updated to work with later versions of PyTorch: note that this will only work with 0.3.1).
 
 ## Dependencies
 
 * LSTM modeling: Python 3.4+, with the following packages
-  * [pytorch](https://pytorch.org/)
+  * [pytorch](https://pytorch.org/) 0.3.1.post2
   * [pronouncing](https://github.com/aparrish/pronouncingpy)
-  * [numpy](http://www.numpy.org/)
-  * [argparse](https://github.com/ThomasWaldmann/argparse/)
+  * [numpy](http://www.numpy.org/) 1.14.0
+  * [argparse](https://github.com/ThomasWaldmann/argparse/) 1.1
   * CUDA is also highly recommended for speed, as is a decent GPU
 * Running ngram baselines:
   * [SRiLM](http://www.speech.sri.com/projects/srilm/download.html)
@@ -18,6 +18,7 @@ This repository contains code for running an LSTM network for the purposes of mo
     - [swig-srilm](https://github.com/desilinguist/swig-srilm)
     - [argparse](https://github.com/ThomasWaldmann/argparse/)
 * Analysis and visualization: R, with the following packages
+  - tidyverse
   - cluster
   - plyr
   - reshape2
@@ -26,7 +27,6 @@ This repository contains code for running an LSTM network for the purposes of mo
   - ggdendro
   - gplots
   - RColorBrewer
-  - graphics
 
 ## Organization
 
