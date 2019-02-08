@@ -1,0 +1,165 @@
+---
+output: html_document
+---
+# PhonRNN
+
+First, we include all required functions for the analysis, including some custom functions from `analysis/utils.R` and other packages from CRAN.
+
+```{r includes}
+# external libraries
+library(ggplot2)
+library(reshape2)
+library(tidyr)
+library(dplyr)
+
+# custom functions
+source("utils.R")
+```
+
+Some parameters need to be set, in particular the location of the results folder (which will probably vary if you run the model yourself.)
+
+```{r params}
+# location of the results folder
+results_folder <- '../results'
+
+# summary file
+summary_data = read.csv(paste0(results_folder, "/summary.csv"))
+
+# probabilities of all words, combined into an easy format and enriched with summary results as well
+# warning: this line might take a minute to run
+enriched_words = utils$combine(results_folder, "final_eval-agg.csv")
+
+# for running baselines on human judgment data. This particular data is available from: https://sites.google.com/site/rdaland/publications/Daland_etal_2011__AverageScores.csv?attredirects=0&d=1
+daland_et_al_2011 <- "../baselines/Daland-et-al_2011.csv"
+
+```
+
+## Timecourse Data
+
+We can analyze the performance of the models across the timecourse of training, in order to see how quickly each model attains its best performance.
+
+```{r timecourse}
+# using performance on validation data
+utils$plot_timecourse(enriched_words, summary_data, "valid")
+
+# using performance on training data
+# (less informative, but good check that the model has converged)
+utils$plot_timecourse(enriched_words, summary_data, "train")
+
+# how does the learning rate change during training?
+utils$plot_timecourse(enriched_words, summary_data)
+```
+
+
+## Final Evaluations
+
+These are evaluations performed on the final state of the model, after training. This plot compares feature-aware and feature-naive conditions, in terms of natural log likelihood assigned to the words in the unseen test set.
+
+```{r final evaluations}
+
+utils$plot_data(enriched_words, split = "test")
+
+# perform Wilcox test
+phonol_aware = subset(enriched_words, split_name == "test" & phonol_emb == "True")
+phonol_naive = subset(enriched_words, split_name == "test" & phonol_emb == "False")
+wilcox.test(phonol_aware$value, phonol_naive$value)
+print(paste0("On average, the log probability assigned to the test corpus by phonologically aware models was ",
+             mean(phonol_aware$value),
+             ", while that assigned by phonologically naive models was",
+             mean(phonol_naive$value), "."))
+
+```
+
+## Clustering
+
+We perform our cluster analysis on both the trained and untrained embeddings.
+
+```{r extract embeddings}
+trained_embs <- utils$get_embeddings(results_folder, trained = TRUE)
+untrained_embs <- utils$get_embeddings(results_folder, trained = FALSE)
+```
+
+Generally, we are only interested in plotting the embeddings for certain models--usually, the models that assign the highest average log-likelihood to the test data.
+
+```{r find best models}
+# summarize models by accuracy
+acc_summary <- utils$summarize_acc(enriched_words)
+
+# find the best model, in each condition
+best_naive <- utils$get_best(acc_summary, phonol_emb_cond = "False")
+best_aware <- utils$get_best(acc_summary, phonol_emb_cond = "True")
+
+```
+
+
+### Heatmaps
+
+Armed with this metadata, we can plot heatmaps of our learned (and unlearned) embeddings.
+
+```{r heatmaps}
+utils$create_heat(trained_embs, best_naive)
+utils$create_heat(untrained_embs, best_naive)
+utils$create_heat(trained_embs, best_aware)
+utils$create_heat(untrained_embs, best_aware)
+```
+
+### Dendrograms
+
+We can use these embeddings to generate more traditional dendrograms, according to agglomerative nesting methods. You should specify `phone_cats_file` as the path to a file with one line for each unique phone in your dataset, plus a line for the headers. These headers should be "phone" for the first column, and the category index of your choice for the second column. (See `analysis/phone_cats.csv` for an example.)
+
+```{r dendrograms}
+phone_cats_file <- "phone_cats.csv"
+
+utils$plot_dendro(trained_embs, best_naive, phone_cats_file)
+utils$plot_dendro(untrained_embs, best_naive, phone_cats_file)
+utils$plot_dendro(trained_embs, best_aware, phone_cats_file)
+utils$plot_dendro(untrained_embs, best_aware, phone_cats_file)
+
+```
+
+## Correlations with Human Judgments on Nonce Words
+
+```{r human data}
+
+# read in just the model probabilities on Daland et al., 2011 words
+model_probs = utils$combine(results_folder, words_file = 'daland-probs.csv')
+read.csv(daland_et_al_2011)
+human_probs = subset(read.csv(daland_et_al_2011),
+                     select = c("phono_ipa", "score"))
+
+# merge data into one big dataframe
+mh_probs = merge(model_probs, human_probs, by.x = "word", by.y = "phono_ipa", all=FALSE)
+
+
+# run a correlation for each random instantiation
+unique_models = unique(mh_probs[c("run_cond", "phonol_emb")])
+unique_models['est'] <- rep(NA, nrow(unique_models)) # estimate of correlation coefficient
+unique_models$sig =rep(NA, nrow(unique_models)) # p-value
+unique_models$stat = rep(NA, nrow(unique_models)) # test statistic
+unique_models$nh = rep(NA, nrow(unique_models)) # null hypothesis
+
+for (m in 1:nrow(unique_models)) {
+  unique_model_row = unique_models[m,]
+  test_data = subset(mh_probs, run_cond == unique_model_row$run_cond, select=c("score", "value"))
+  cor_test = cor.test(test_data$score, test_data$value,
+                      method = "spearman")
+  
+  # store variables
+  unique_models[m,'est'] = cor_test$estimate
+  unique_models[m,'sig'] = cor_test$p.value
+  unique_models[m,'stat']= cor_test$statistic
+  unique_models[m,'nh'] = cor_test$null.value
+}
+
+# Does one condition do well over the other?
+ggplot(data = unique_models, aes(x = phonol_emb, y = est, fill = phonol_emb)) +
+  geom_boxplot() +
+  labs(y = "Spearman\'s rho",
+         x = "Condition",
+         title="Correlations between each model's prediction\nand well-formedness scores from Daland et al. (2012)",
+  scale_x_discrete(breaks = c("True", "False"),
+                   labels= c("Feature-aware", "Feature-naive"))) +
+  theme(legend.position = "none") +
+  scale_fill_manual(values = brewer.pal(n=3, name="PuOr")[c(1,3)])
+
+```
