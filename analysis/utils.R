@@ -353,8 +353,6 @@ utils$get_embeddings <- function(results_folder, trained) {
 
 # function that plots a dendrogram from a single embedding matrix
 utils$plot_dendro <- function (embs, model_id, phone_cat_file) {
-  embs = trained_embs
-  model_id = "0-6"
   model_ag = agnes(t(as.data.frame(embs[,model_id])))
   dendro <- as.dendrogram(model_ag)
   ddata <- dendro_data(dendro, type = "rectangle")
