@@ -49,7 +49,7 @@ utils$plot_timecourse(enriched_words, summary_data)
 
 These are evaluations performed on the final state of the model, after training. This plot compares feature-aware and feature-naive conditions, in terms of natural log likelihood assigned to the words in the unseen test set.
 
-```{r final evaluations}
+```{r final evaluations, fig.height=3, fig.width=5}
 
 utils$plot_data(enriched_words, split = "test")
 
@@ -82,7 +82,6 @@ acc_summary <- utils$summarize_acc(enriched_words)
 # find the best model, in each condition
 best_naive <- utils$get_best(acc_summary, phonol_emb_cond = "False")
 best_aware <- utils$get_best(acc_summary, phonol_emb_cond = "True")
-
 ```
 
 
@@ -144,12 +143,18 @@ for (m in 1:nrow(unique_models)) {
   unique_models[m,'nh'] = cor_test$null.value
 }
 
+range(unique_models$est)
+max(unique_models$sig)
+
+wilcox.test(subset(unique_models, phonol_emb == "True")$est,
+            subset(unique_models, phonol_emb == "False")$est)
+
 # Does one condition do well over the other?
 ggplot(data = unique_models, aes(x = phonol_emb, y = est, fill = phonol_emb)) +
   geom_boxplot() +
   labs(y = "Spearman\'s rho",
          x = "Condition",
-         title="Correlations between each model's prediction\nand well-formedness scores from Daland et al. (2012)",
+         title="Correlations between each model's prediction\nand well-formedness scores from Daland et al. (2011)",
   scale_x_discrete(breaks = c("True", "False"),
                    labels= c("Feature-aware", "Feature-naive"))) +
   theme(legend.position = "none") +
