@@ -372,15 +372,15 @@ utils$plot_dendro <- function (embs, model_id, phone_cat_file) {
     
     result_plot <- ggplot(segment(ddata)) + 
       geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + 
-      # coord_flip() + 
-      # scale_y_reverse(expand = c(0.4, 0)) +
+      coord_flip() + 
+      scale_y_reverse(expand = c(0, 0.5)) +
       theme_dendro() +
       # theme_set(theme_dendro(base_size = 18)) +
       geom_text(aes(x = x, y = y,
                     label = label, angle = 0,
                     color=labs$group), data= labs,
                 fontface = "bold",size=3.5,
-                nudge_y = -0.25) +
+                nudge_y = 0.25) +
       scale_x_discrete(labels=labs$label) +
       scale_color_brewer(palette = "Dark2") +
       labs(color = colnames(phone_cats)[2]) +
