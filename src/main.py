@@ -29,7 +29,7 @@ def main(preset_args = False):
     parser.add_argument('--nhid', type=int, default=256,
                         help='number of hidden units per layer')
     parser.add_argument('--nlayers', type=int, default=2,
-                        help='number of layers')
+                        help='number of recurrent layers')
     parser.add_argument('--lr', type=float, default=1.0,
                         help='initial learning rate')
     parser.add_argument('--anneal_factor', type=float, default=0.25,
