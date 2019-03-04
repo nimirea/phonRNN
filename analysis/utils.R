@@ -352,8 +352,10 @@ utils$get_embeddings <- function(results_folder, trained) {
 }
 
 # function that plots a dendrogram from a single embedding matrix
-utils$plot_dendro <- function (embs, model_id, phone_cat_file) {
-  model_ag = agnes(t(as.data.frame(embs[,model_id])))
+utils$plot_dendro <- function (embs, model_id, phone_cat_file,
+                               dist_metric = "euclidean",
+                               title = "Title") {
+  model_ag = agnes(t(as.data.frame(embs[,model_id])), metric = dist_metric)
   dendro <- as.dendrogram(model_ag)
   ddata <- dendro_data(dendro, type = "rectangle")
   
@@ -361,31 +363,53 @@ utils$plot_dendro <- function (embs, model_id, phone_cat_file) {
   labs <- label(ddata)
   labs$label = gsub("X.s.", "<s>", labs$label)
   labs$label = gsub("X.", "</s>", labs$label)
-  labs[order(labs$label),]
+  labs <- labs[order(labs$label),]
   
   # import data about phone categories
   phone_cats <- read.csv(phone_cat_file)
-  phone_cats[order(phone_cats$phone),] # reorder alphabetically by phone
+  phone_cats$phone <- as.character(phone_cats$phone)
+  row.names(phone_cats) <- phone_cats$phone
   
   if (nrow(labs) == nrow(phone_cats)) {
-    labs$group <- phone_cats[,2] # add category as group
     
+    for (row_idx in 1:nrow(labs)) {
+      phone = labs[row_idx, 'label']
+      labs[row_idx, "group"] = phone_cats[phone, "category"]
+    }
+
     result_plot <- ggplot(segment(ddata)) + 
       geom_segment(aes(x = x, y = y, xend = xend, yend = yend)) + 
       coord_flip() + 
-      scale_y_reverse(expand = c(0, 0.5)) +
       theme_dendro() +
       # theme_set(theme_dendro(base_size = 18)) +
-      geom_text(aes(x = x, y = y,
-                    label = label, angle = 0,
-                    color=labs$group), data= labs,
-                fontface = "bold",size=3.5,
-                nudge_y = 0.25) +
       scale_x_discrete(labels=labs$label) +
       scale_color_brewer(palette = "Dark2") +
-      labs(color = colnames(phone_cats)[2]) +
+      labs(color = "category",
+           title = title) +
       theme(legend.position="bottom") +
       NULL
+    
+    if (dist_metric == "manhattan") {
+      result_plot <- result_plot +
+        scale_y_reverse(expand = c(0, 5)) +
+        geom_text(aes(x = x, y = y,
+                      label = label, angle = 0,
+                      color=labs$group), data= labs,
+                  fontface = "bold",size=3.5,
+                  nudge_y = 1,
+                  hjust = 0) +
+        NULL
+    } else {
+      result_plot <- result_plot +
+        scale_y_reverse(expand = c(0, 2)) +
+        geom_text(aes(x = x, y = y,
+                      label = label, angle = 0,
+                      color=labs$group), data= labs,
+                  fontface = "bold",size=3.5,
+                  nudge_y = 0.25,
+                  hjust = 0) +
+        NULL
+    }
     
   } else {
     # don't bother with groups
@@ -400,7 +424,7 @@ utils$plot_dendro <- function (embs, model_id, phone_cat_file) {
                     label = label, angle = 0),
                 data= labs,
                 fontface = "bold",size=3.5,
-                nudge_y = -0.25) +
+                nudge_y = 1) +
       scale_x_discrete(labels=labs$label) +
       scale_color_brewer(palette = "Dark2") +
       theme(legend.position="bottom") +

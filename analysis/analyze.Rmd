@@ -24,7 +24,7 @@ summary_data = read.csv(paste0(results_folder, "/summary.csv"))
 enriched_words = utils$combine(results_folder, "final_eval-agg.csv")
 
 # for running baselines on human judgment data. This particular data is available from: https://sites.google.com/site/rdaland/publications/Daland_etal_2011__AverageScores.csv?attredirects=0&d=1
-daland_et_al_2011 <- "../baselines/Daland-et-al_2011.csv"
+daland_et_al_2011 <- "../baselines/Daland_etal_2011__AverageScores.csv"
 
 ```
 
@@ -100,7 +100,7 @@ utils$create_heat(untrained_embs, best_aware)
 
 We can use these embeddings to generate more traditional dendrograms, according to agglomerative nesting methods. You should specify `phone_cats_file` as the path to a file with one line for each unique phone in your dataset, plus a line for the headers. These headers should be "phone" for the first column, and the category index of your choice for the second column. (See `analysis/phone_cats.csv` for an example.)
 
-```{r dendrograms}
+```{r dendrograms, fig.height=9, fig.width=5}
 phone_cats_file <- "phone_cats.csv"
 
 utils$plot_dendro(trained_embs, best_naive, phone_cats_file)
@@ -108,6 +108,13 @@ utils$plot_dendro(untrained_embs, best_naive, phone_cats_file)
 utils$plot_dendro(trained_embs, best_aware, phone_cats_file)
 utils$plot_dendro(untrained_embs, best_aware, phone_cats_file)
 
+# Plot Manhattan distances too, for comparison
+utils$plot_dendro(trained_embs, best_naive, phone_cats_file,
+                  dist_metric = "manhattan",
+                  title = "Best Naive | Manhattan")
+utils$plot_dendro(trained_embs, best_aware, phone_cats_file,
+                  dist_metric = "manhattan",
+                  title = "Best Aware | Manhattan")
 ```
 
 ## Correlations with Human Judgments on Nonce Words
