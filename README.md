@@ -149,5 +149,5 @@ The `src/eval.py` script is used for evaluation. You can evaluate your models on
 | `--out`          | string  | name of output file to write the results to                  |
 | `--cuda`         | boolean | use CUDA                                                     |
 | `--seed`         | integer | random seed                                                  |
-| `--stress        | boolean | keep track of word stress                                    |
+| `--stress`       | boolean | keep track of word stress                                    |
 
