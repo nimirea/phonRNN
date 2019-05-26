@@ -56,7 +56,7 @@ utils$plot_data(enriched_words, split = "test")
 # perform Wilcox test
 phonol_aware = subset(enriched_words, split_name == "test" & phonol_emb == "True")
 phonol_naive = subset(enriched_words, split_name == "test" & phonol_emb == "False")
-wilcox.test(phonol_aware$value, phonol_naive$value)
+wilcox.test(phonol_aware$value, phonol_naive$value, conf.int=TRUE)
 print(paste0("On average, the log probability assigned to the test corpus by phonologically aware models was ",
              mean(phonol_aware$value),
              ", while that assigned by phonologically naive models was",
