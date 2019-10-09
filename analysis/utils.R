@@ -292,7 +292,7 @@ utils$condition_number <- function(summary_acc_table, variable, value) {
 # create a heat map using the specified data
 utils$create_heat <- function(embs, emb_name, title = "") {
   # turn into matrix
-  model_emb <- as.matrix(as.data.frame(embs[,emb_name]))
+  model_emb <- t(as.matrix(as.data.frame(embs[,emb_name])))
   
   # create heat map
   heatmap.2(model_emb,
@@ -300,10 +300,13 @@ utils$create_heat <- function(embs, emb_name, title = "") {
             trace = "none",
             col = colorRampPalette(brewer.pal(9,'PuOr'))(n=40),
             main = title,
-            xlab = "Phonetic Segment",
-            labCol = gsub("\n", "</s>", colnames(model_emb)),
-            ylab = "Embedding Dimension"
-            # cexRow = 2
+            xlab = "Embedding Dimension",
+            labRow = gsub("\n", "</s>", rownames(model_emb)),
+            ylab = "Phonetic Segment",
+            cexRow = 1.9,
+            srtCol = 45,
+            # par(cex.lab = 3)
+            cexCol = 1.9
   )
 }
 
@@ -354,7 +357,7 @@ utils$get_embeddings <- function(results_folder, trained) {
 # function that plots a dendrogram from a single embedding matrix
 utils$plot_dendro <- function (embs, model_id, phone_cat_file,
                                dist_metric = "euclidean",
-                               title = "Title") {
+                               title = "") {
   model_ag = agnes(t(as.data.frame(embs[,model_id])), metric = dist_metric)
   dendro <- as.dendrogram(model_ag)
   ddata <- dendro_data(dendro, type = "rectangle")
@@ -386,7 +389,7 @@ utils$plot_dendro <- function (embs, model_id, phone_cat_file,
       scale_color_brewer(palette = "Dark2") +
       labs(color = "category",
            title = title) +
-      theme(legend.position="bottom") +
+      theme(legend.position="bottom", text = element_text(size=16, family="Open Sans")) +
       NULL
     
     if (dist_metric == "manhattan") {
@@ -405,7 +408,7 @@ utils$plot_dendro <- function (embs, model_id, phone_cat_file,
         geom_text(aes(x = x, y = y,
                       label = label, angle = 0,
                       color=labs$group), data= labs,
-                  fontface = "bold",size=3.5,
+                  fontface = "bold",size=5,
                   nudge_y = 0.25,
                   hjust = 0) +
         NULL

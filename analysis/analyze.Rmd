@@ -89,8 +89,9 @@ best_aware <- utils$get_best(acc_summary, phonol_emb_cond = "True")
 
 Armed with this metadata, we can plot heatmaps of our learned (and unlearned) embeddings.
 
-```{r heatmaps}
+```{r heatmaps, fig.width = 20, fig.height = 20}
 utils$create_heat(trained_embs, best_naive)
+ggsave("heatmap-random.pdf", width = 20, height = 20, units = "in", dpi = 300)
 utils$create_heat(untrained_embs, best_naive)
 utils$create_heat(trained_embs, best_aware)
 utils$create_heat(untrained_embs, best_aware)
@@ -100,7 +101,7 @@ utils$create_heat(untrained_embs, best_aware)
 
 We can use these embeddings to generate more traditional dendrograms, according to agglomerative nesting methods. You should specify `phone_cats_file` as the path to a file with one line for each unique phone in your dataset, plus a line for the headers. These headers should be "phone" for the first column, and the category index of your choice for the second column. (See `analysis/phone_cats.csv` for an example.)
 
-```{r dendrograms, fig.height=9, fig.width=5}
+```{r dendrograms, fig.height=16, fig.width=8}
 phone_cats_file <- "phone_cats.csv"
 
 utils$plot_dendro(trained_embs, best_naive, phone_cats_file)
