@@ -5,3 +5,4 @@ experiment.Rproj
 baselines/Daland-et-al_2011.csv
 *.html
 .~*
+data/src/mayer_nelson_data
