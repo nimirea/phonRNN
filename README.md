@@ -108,7 +108,7 @@ Run `src/main.py` with the following parameters:
 | `--condition`       | integer | Condition index, referenced in summary CSV                   |
 | `--run`             | integer | Run index, within condition                                  |
 | `--feat_tree`       | string  | Feature tree to use. At present, only 'Futrell' or 'orig' are possible, and 'Futrell' is highly recommended |
-| `--alphabet`        | string  | Format that the data is in (IPA or ARPABET)                  |
+| `--alphabet`        | string  | Format that the data is in (IPA or ARPA)                  |
 | `--set_unset_nodes` | boolean | Use set/unset nodes                                          |
 | `--random_reset`    | boolean | Reset the model's activations to an initial random state after each word. |
 
@@ -127,7 +127,7 @@ You can also change some of the parameters of the experiment within the call its
 | flag                 | type    | description                                                  |
 | -------------------- | ------- | ------------------------------------------------------------ |
 | `--data`             | string  | location of the data corpus                                  |
-| `--alphabet`         | string  | Format that the data is in (IPA or ARPABET)                  |
+| `--alphabet`         | string  | Format that the data is in (IPA or ARPA)                  |
 | `--feat_tree`        | string  | Feature tree to use. At present, only 'Futrell' or 'orig' are possible, and 'Futrell' is highly recommended |
 | `--condition_runs`   | integer | Runs per condition                                           |
 | `--output_dir`       | string  | path to save results, including summary CSV and model checkpoints |
